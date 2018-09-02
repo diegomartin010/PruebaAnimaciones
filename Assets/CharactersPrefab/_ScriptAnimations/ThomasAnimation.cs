@@ -47,10 +47,6 @@ public class ThomasAnimation : MonoBehaviour {
 		var a = Input.GetKey (KeyCode.A);
 		var d = Input.GetKey (KeyCode.D);
 		var esp = Input.GetKeyDown (KeyCode.Space);
-		var wa = w && a;
-		var wd = w && d;
-		var sa = s && a;
-		var sd = s && d;
 
 		//Detectar teclas de acciones
 		var click = Input.GetMouseButton (0);
@@ -60,64 +56,63 @@ public class ThomasAnimation : MonoBehaviour {
 		var x = Input.GetKey (KeyCode.X);
 
 		//Si no presiona nada.
-		if (noKey&&crouch) {m_animator.Play ("CrouchIdle");return;}
-		//Si presiona S y A
-		if (sa&&crouch) {return;}
-		//Si presiona S y D
-		if (sd&&crouch) {return;}
-		// si presiona la tecla w y a 
-		if (wa&&crouch) {return;}
-		// si presiona la tecla w y d
-		if (wd&&crouch) {return;}
+		if (noKey) {
+			//Seteo todos los parametros del animator para que el tipo se quede quieto.
+			m_animator.SetBool("Forward",false);
+			m_animator.SetBool("Backward",false);
+			m_animator.SetBool("Right",false);
+			m_animator.SetBool("Left",false);
+			m_animator.SetBool("Run",false);
+			print("NoAprietoNada");
+		}
+
 		// si presiona la tecla w 
-		if (w&&crouch) {m_animator.Play ("CrouchForward");return;}
+		if(w||a||s||d){ 
+			//Si se aprieta 
+			m_animator.SetBool("Run",true); 
+			print("Teclas de Movimiento");
+		}
+		if (w) {
+			m_animator.SetBool("Forward",true);
+			print("aprieto a");	
+		}
 		// si presiona la tecla a 
-		if (a&&crouch) {m_animator.Play ("CrouchLeft");return;}
+		if (a) {
+			m_animator.SetBool("Left",true);
+		}
 		// si presiona la tecla s
-		if (s&&crouch) {m_animator.Play ("CrouchBack");return;}
+		if (s) {
+			m_animator.SetBool("Backward",true);
+		}
 		// si presiona la tecla d
-		if (d&&crouch) {m_animator.Play ("CrouchRight");return;}
-
-
-		if (w&&esp) { StartCoroutine( JumpForwardAnimation() );return;}
-
-		//Si no presiona nada.
-		if (noKey) {m_animator.Play ("Idle");return;}
-		//Si presiona S y A
-		if (sa) {m_animator.Play ("Back");return;}
-		//Si presiona S y D
-		if (sd) {m_animator.Play ("Back");return;}
-		// si presiona la tecla w y a 
-		if (wa) {m_animator.Play ("Run");return;}
-		// si presiona la tecla w y d
-		if (wd) {m_animator.Play ("Run");return;}
-		// si presiona la tecla w 
-		if (w) {m_animator.Play ("Run");return;}
-		// si presiona la tecla a 
-		if (a) {m_animator.Play ("Left");return;}
-		// si presiona la tecla s
-		if (s) {m_animator.Play ("Back");return;}
-		// si presiona la tecla d
-		if (d) {m_animator.Play ("Right");return;}
-
+		if (d) {
+			m_animator.SetBool("Right",true);
+		}
 		// Si aprieta la tecla C
-		if(c){crouch = true;return;}
-		if(x){crouch = false; return;}
+		if(c){
+			m_animator.SetBool("Crouch",true);
+		}
+		if(x){
+			m_animator.SetBool("Crouch",false);
+		}
 
 		//Acciones con click mouse.
-		if (click) {m_animator.Play ("Shooting");return;}
-		if (clickRight) {m_animator.Play ("PistolAim");return;}
+		if (click) {}
+		if (clickRight) {}
 		//Si presiona space
-		if (esp) { StartCoroutine( JumpAnimation()); return; }
+		if (esp) {}
 		//Acciones con la tecla E
-		if (e) {StartCoroutine( TakeAnimation() );return;}
+		if (e) {
+			StartCoroutine(TakeAnimation());
+		}
 		//Animacion al Morir.
-		if (dead) { StartCoroutine( DieAnimation() ); return;}
+		if (dead) {
+			StartCoroutine(DieAnimation());
+		}
 		//Animacion al recibir Daño.
-		if (damage) {StartCoroutine( DamageAnimation() );return;}
-
-
-
+		if (damage) {
+			StartCoroutine(DamageAnimation());
+		}
 
 	}
 		
@@ -143,6 +138,7 @@ public class ThomasAnimation : MonoBehaviour {
 		m_animator.Play("Take");
 		yield return new WaitForSeconds (1.11f);
 		lockAnimations = false;
+		m_animator.Play("Idle");
 	}
 
 	// Corrutina de Animacion al Morir
@@ -158,6 +154,7 @@ public class ThomasAnimation : MonoBehaviour {
 		m_animator.Play("Damage");
 		yield return new WaitForSeconds (1);
 		lockAnimations = false;
+		m_animator.Play("Idle");
 	}
 
 }
